@@ -1,10 +1,10 @@
-﻿
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Xml.Schema;
 
 namespace LinkedList
 {
-
+    //Элемент списка
     public class LinkedListNode<T>
     {
         public T Data { get; set; }
@@ -12,25 +12,35 @@ namespace LinkedList
         public LinkedListNode<T> Prev { get; set; }
     }
 
-    public class DoublyLinkedList<T> 
+    public class DoublyLinkedList<T>
     {
-          private LinkedListNode<T> head;
+        //голова списка
+        private LinkedListNode<T> head;
+
+        //хвост списка
         private LinkedListNode<T> tail;
 
+        private int count;
+
+        public string Count => count.ToString();
+
+        //конструктор создает null по умолчанию
         public DoublyLinkedList()
         {
             tail = head = null;
         }
 
+        //создается элемент списка и отправляется в метод Add
         public void Add(T data)
         {
             LinkedListNode<T> node = new LinkedListNode<T> {Data = data};
             Add(node);
         }
 
+        //Добавляет элемент в конец списка
         private void Add(LinkedListNode<T> node)
         {
-            if (tail != null )
+            if (tail != null)
             {
                 node.Prev = tail;
             }
@@ -45,9 +55,12 @@ namespace LinkedList
             }
 
             tail = node;
+            count++;
         }
+
+        //добавляет элемент в начало списка
         public void AddFirst(T value)
-        { 
+        {
             if (head == null)
             {
                 head = tail = new LinkedListNode<T> {Data = value};
@@ -59,61 +72,49 @@ namespace LinkedList
                 temp.Prev = head;
                 head.Next = temp;
             }
-        }
-        public LinkedListNode<T> Search(T value)
-        {
-            var result = head; //node cha
-            var temp = head; //node chứa k nếu tìm thấy
-            while ((temp != null) && (temp.Data.ToString() != value.ToString()))
-            {
-                result = temp;
-                temp = temp.Next;
-            }
-            if (temp == null)
-                result = null;
-            return result;
+
+            count++;
         }
 
-       
-        
-        public T Delete()
+        //Удаляет следующее значение после выбранного
+        public void DeleteNext(int value)
         {
-            T retr;
-            if (head != null)
+            var temp = head;
+
+            if (value > count)
             {
-                retr = head.Data;
-                head = head.Next;
-                head.Prev = null;
+                Console.WriteLine("Заданное значение больше чем максимальное");
+                return;
+            }
+
+            if (value > 0)
+            {
+                for (int i = 1; i < value; i++)
+                {
+                    temp = temp.Next;
+                }
+            }
+
+            if (temp.Next == null)
+            {
+                Console.WriteLine("Нету следующего элемента списка");
+                return;
+            }
+
+            if (temp.Next.Next != null)
+            {
+                temp.Next = temp.Next.Next;
             }
             else
             {
-                retr = head.Data;
-                head = null;
-                tail = null;
+                temp.Next = null;
+                tail = temp;
             }
 
-            return retr;
-        }
-       
-        public void Delete(T value)
-        {
-            var temp = Search(value);
-            if (temp.Next != null)
-            {
-                if (temp.Next.Next != null)
-                {
-                    temp.Next.Next = temp.Next.Next.Next;
-                    if (temp.Next.Next.Next == null)
-                    {
-                        tail = temp.Next.Next;
-                    }
-                }
-
-            }
-
+            count--;
         }
 
-
+        //вывести все значения
         public void ShowAll()
         {
             LinkedListNode<T> tempListNode = head;
@@ -128,8 +129,10 @@ namespace LinkedList
                 {
                     Console.Write("{0}", tempListNode.Data.ToString());
                 }
+
                 tempListNode = tempListNode.Next;
             }
+
             Console.WriteLine("}");
         }
     }
